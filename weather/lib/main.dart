@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'server.dart';
 
 void main() {
   runApp(const HorizonsApp());
@@ -72,12 +73,12 @@ class WeeklyForecastList extends StatelessWidget {
   Widget build(BuildContext context) {
     final DateTime currentDate = DateTime.now();
     final TextTheme textTheme = Theme.of(context).textTheme;
+    final forecasts = Server.getDailyForecast();
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
             (context, index) {
-          final DailyForecast dailyForecast =
-          Server.getDailyForecastByID(index);
+              final forecast = forecasts[index];
           return Card(
             child: Row(
               children: <Widget>[
@@ -98,13 +99,12 @@ class WeeklyForecastList extends StatelessWidget {
                           ),
                         ),
                         child: Image.network(
-                          dailyForecast.imageId,
-                          fit: BoxFit.cover,
+                          "${baseAssetURL}/day_$index.jpeg",
                         ),
                       ),
                       Center(
                         child: Text(
-                          dailyForecast.getDate(currentDate.day).toString(),
+                          forecast.time.day.toString(),
                           style: textTheme.headline2,
                         ),
                       ),
@@ -118,11 +118,11 @@ class WeeklyForecastList extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          dailyForecast.getWeekday(currentDate.weekday),
+                          forecast.getWeekday(),
                           style: textTheme.headline4,
                         ),
                         const SizedBox(height: 10.0),
-                        Text(dailyForecast.description),
+                        Text(forecast.weathercode.description),
                       ],
                     ),
                   ),
@@ -130,7 +130,7 @@ class WeeklyForecastList extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Text(
-                    '${dailyForecast.highTemp} | ${dailyForecast.lowTemp} F',
+                    '${forecast.temperature_2m_max} | ${forecast.temperature_2m_min} C',
                     style: textTheme.subtitle1,
                   ),
                 ),
@@ -138,7 +138,7 @@ class WeeklyForecastList extends StatelessWidget {
             ),
           );
         },
-        childCount: 7,
+        childCount: forecasts.length,
       ),
     );
   }
@@ -146,107 +146,6 @@ class WeeklyForecastList extends StatelessWidget {
 
 // --------------------------------------------
 // Below this line are helper classes and data.
-
-const String baseAssetURL =
-    'https://dartpad-workshops-io2021.web.app/getting_started_with_slivers/';
-const String headerImage = '${baseAssetURL}assets/header.jpeg';
-
-const Map<int, DailyForecast> _kDummyData = {
-  0: DailyForecast(
-    id: 0,
-    imageId: '${baseAssetURL}assets/day_0.jpeg',
-    highTemp: 73,
-    lowTemp: 52,
-    description:
-    'Partly cloudy in the morning, with sun appearing in the afternoon.',
-  ),
-  1: DailyForecast(
-    id: 1,
-    imageId: '${baseAssetURL}assets/day_1.jpeg',
-    highTemp: 70,
-    lowTemp: 50,
-    description: 'Partly sunny.',
-  ),
-  2: DailyForecast(
-    id: 2,
-    imageId: '${baseAssetURL}assets/day_2.jpeg',
-    highTemp: 71,
-    lowTemp: 55,
-    description: 'Party cloudy.',
-  ),
-  3: DailyForecast(
-    id: 3,
-    imageId: '${baseAssetURL}assets/day_3.jpeg',
-    highTemp: 74,
-    lowTemp: 60,
-    description: 'Thunderstorms in the evening.',
-  ),
-  4: DailyForecast(
-    id: 4,
-    imageId: '${baseAssetURL}assets/day_4.jpeg',
-    highTemp: 67,
-    lowTemp: 60,
-    description: 'Severe thunderstorm warning.',
-  ),
-  5: DailyForecast(
-    id: 5,
-    imageId: '${baseAssetURL}assets/day_5.jpeg',
-    highTemp: 73,
-    lowTemp: 57,
-    description: 'Cloudy with showers in the morning.',
-  ),
-  6: DailyForecast(
-    id: 6,
-    imageId: '${baseAssetURL}assets/day_6.jpeg',
-    highTemp: 75,
-    lowTemp: 58,
-    description: 'Sun throughout the day.',
-  ),
-};
-
-class Server {
-  static List<DailyForecast> getDailyForecastList() =>
-      _kDummyData.values.toList();
-
-  static DailyForecast getDailyForecastByID(int id) {
-    assert(id >= 0 && id <= 6);
-    return _kDummyData[id]!;
-  }
-}
-
-class DailyForecast {
-  const DailyForecast({
-    required this.id,
-    required this.imageId,
-    required this.highTemp,
-    required this.lowTemp,
-    required this.description,
-  });
-
-  final int id;
-  final String imageId;
-  final int highTemp;
-  final int lowTemp;
-  final String description;
-
-  static const List<String> _weekdays = <String>[
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
-
-  String getWeekday(int today) {
-    final int offset = today + id;
-    final int day = offset >= 7 ? offset - 7 : offset;
-    return _weekdays[day];
-  }
-
-  int getDate(int today) => today + id;
-}
 
 class ConstantScrollBehavior extends ScrollBehavior {
   const ConstantScrollBehavior();
