@@ -1,144 +1,111 @@
 import 'package:flutter/material.dart';
+
+import 'hourly_forecast_list.dart';
 import 'server.dart';
+import 'weekly_forecast_list.dart';
 
 void main() {
-  runApp(const HorizonsApp());
+  runApp(HorizonsApp());
 }
 
 class HorizonsApp extends StatelessWidget {
-  const HorizonsApp({Key? key}) : super(key: key);
-
+  HorizonsApp({Key? key}) : super(key: key);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      // This is the theme of your application.
-      theme: ThemeData.dark(),
-      // Scrolling in Flutter behaves differently depending on the
-      // ScrollBehavior. By default, ScrollBehavior changes depending
-      // on the current platform. For the purposes of this scrolling
-      // workshop, we're using a custom ScrollBehavior so that the
-      // experience is the same for everyone - regardless of the
-      // platform they are using.
-      scrollBehavior: const ConstantScrollBehavior(),
-      title: 'Horizons Weather',
-      home: Scaffold(
-        body: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              pinned: true,
-              stretch: true,
-              onStretchTrigger: () async {
-                print('Load new data!');
-                // await Server.requestNewData();
-              },
-              backgroundColor: Colors.teal[800],
-              expandedHeight: 200.0,
-              flexibleSpace: FlexibleSpaceBar(
-                stretchModes: const [
-                  StretchMode.zoomBackground,
-                  StretchMode.fadeTitle,
-                  StretchMode.blurBackground,
-                ],
-                title: const Text('Horizons'),
-                background: DecoratedBox(
-                  position: DecorationPosition.foreground,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.center,
-                      colors: <Color>[Colors.teal[800]!, Colors.transparent],
-                    ),
-                  ),
-                  child: Image.network(
-                    headerImage,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            const WeeklyForecastList(),
+        debugShowCheckedModeBanner: false,
+        // This is the theme of your application.
+        theme: ThemeData.dark(),
+        // Scrolling in Flutter behaves differently depending on the
+        // ScrollBehavior. By default, ScrollBehavior changes depending
+        // on the current platform. For the purposes of this scrolling
+        // workshop, we're using a custom ScrollBehavior so that the
+        // experience is the same for everyone - regardless of the
+        // platform they are using.
+        scrollBehavior: const ConstantScrollBehavior(),
+        title: 'Horizons Weather',
+        home: ForecastWidget());
+  }
+}
+
+class ForecastWidget extends StatefulWidget {
+  const ForecastWidget({Key? key}) : super(key: key);
+
+  @override
+  State<ForecastWidget> createState() => _ForecastWidgetState();
+}
+
+class _ForecastWidgetState extends State<ForecastWidget> {
+  int _selectedIndex = 0;
+  final _tabs = [
+    WeeklyForecastList.new,
+    HourlyForecastList.new,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Server.restore(),
+      builder: (context, snapshot) => Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await Server.refresh();
+            await Server.save();
+            print('Refresh was called');
+          },
+          child: CustomScrollView(
+            slivers: <Widget>[
+              _buildSliverAppBar(),
+              _tabs.elementAt(_selectedIndex).call()
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_view_week), label: 'Weekly'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_view_day), label: 'Hourly'),
           ],
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
         ),
       ),
     );
   }
-}
 
-class WeeklyForecastList extends StatelessWidget {
-  const WeeklyForecastList({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final DateTime currentDate = DateTime.now();
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final forecasts = Server.getDailyForecast();
-
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final forecast = forecasts[index];
-          return Card(
-            child: Row(
-              children: <Widget>[
-                SizedBox(
-                  height: 100.0,
-                  width: 100.0,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: <Widget>[
-                      DecoratedBox(
-                        position: DecorationPosition.foreground,
-                        decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                            colors: <Color>[
-                              Colors.grey[800]!,
-                              Colors.transparent
-                            ],
-                          ),
-                        ),
-                        child: Image.network(
-                          "${baseAssetURL}/day_$index.jpeg",
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          forecast.time.day.toString(),
-                          style: textTheme.headline2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          forecast.getWeekday(),
-                          style: textTheme.headline4,
-                        ),
-                        const SizedBox(height: 10.0),
-                        Text(forecast.weathercode.description),
-                      ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Text(
-                    '${forecast.temperature_2m_max} | ${forecast.temperature_2m_min} C',
-                    style: textTheme.subtitle1,
-                  ),
-                ),
-              ],
+  SliverAppBar _buildSliverAppBar() {
+    return SliverAppBar(
+      pinned: true,
+      stretch: true,
+      backgroundColor: Colors.teal[800],
+      expandedHeight: 200.0,
+      flexibleSpace: FlexibleSpaceBar(
+        stretchModes: const [
+          StretchMode.zoomBackground,
+          StretchMode.fadeTitle,
+          StretchMode.blurBackground,
+        ],
+        title: const Text('Horizons'),
+        background: DecoratedBox(
+          position: DecorationPosition.foreground,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.center,
+              colors: <Color>[Colors.teal[800]!, Colors.transparent],
             ),
-          );
-        },
-        childCount: forecasts.length,
+          ),
+          child: Image.network(
+            headerImage,
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
     );
   }
@@ -152,12 +119,12 @@ class ConstantScrollBehavior extends ScrollBehavior {
 
   @override
   Widget buildScrollbar(
-      BuildContext context, Widget child, ScrollableDetails details) =>
+          BuildContext context, Widget child, ScrollableDetails details) =>
       child;
 
   @override
   Widget buildOverscrollIndicator(
-      BuildContext context, Widget child, ScrollableDetails details) =>
+          BuildContext context, Widget child, ScrollableDetails details) =>
       child;
 
   @override
