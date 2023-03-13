@@ -39,32 +39,42 @@ class ForecastWidget extends StatefulWidget {
 class _ForecastWidgetState extends State<ForecastWidget> {
   int _selectedIndex = 0;
   final _tabs = [
-    const WeeklyForecastList(),
-    const HourlyForecastList(),
+    WeeklyForecastList.new,
+    HourlyForecastList.new,
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          _buildSliverAppBar(),
-          _tabs.elementAt(_selectedIndex)
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_view_week), label: 'Weekly'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_view_day), label: 'Hourly'),
-        ],
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+    return FutureBuilder(
+      future: Server.restore(),
+      builder: (context, snapshot) => Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await Server.refresh();
+            await Server.save();
+            print('Refresh was called');
+          },
+          child: CustomScrollView(
+            slivers: <Widget>[
+              _buildSliverAppBar(),
+              _tabs.elementAt(_selectedIndex).call()
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_view_week), label: 'Weekly'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_view_day), label: 'Hourly'),
+          ],
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
       ),
     );
   }
@@ -73,10 +83,6 @@ class _ForecastWidgetState extends State<ForecastWidget> {
     return SliverAppBar(
       pinned: true,
       stretch: true,
-      onStretchTrigger: () async {
-        print('Load new data!');
-        // await Server.requestNewData();
-      },
       backgroundColor: Colors.teal[800],
       expandedHeight: 200.0,
       flexibleSpace: FlexibleSpaceBar(
@@ -104,7 +110,6 @@ class _ForecastWidgetState extends State<ForecastWidget> {
     );
   }
 }
-
 
 // --------------------------------------------
 // Below this line are helper classes and data.

@@ -14,3 +14,10 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## Improvements
+
+- Use constants for keys of fields
+- Swap out images in the daily list view for images related to the weather codes.
+- Build url from the kinds of metrics you are plotting in charts.
+- Time check for cache.

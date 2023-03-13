@@ -104,8 +104,10 @@ class _MainScreenState extends State<MainScreen> {
 
   _addDecimal() {
     return () {
+      final newNumber = "$number.";
+      if (num.tryParse(newNumber) == null) return;
       setState(() {
-        number = "$number.";
+        number = newNumber;
       });
     };
   }
