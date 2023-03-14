@@ -19,54 +19,32 @@ class MyApp extends StatelessWidget {
       title: title,
       theme: ThemeData.dark(),
       themeMode: ThemeMode.dark,
-      home: const MainScreen(title: title),
+      home: const StateChanger(),
     );
   }
 }
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.title});
-  final String title;
+class StateChanger extends StatefulWidget {
+  const StateChanger({super.key});
+
+  static StateChangerState of(BuildContext context) {
+    return context.findAncestorStateOfType<StateChangerState>()!;
+  }
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<StateChanger> createState() => StateChangerState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class StateChangerState extends State<StateChanger> {
   CalcState state = CalcState.empty();
   String number = "";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Flexible(
-            flex: 1,
-            // Consumes state
-            child: Display(
-              state: state,
-              number: number,
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            // Changes state
-            child: Keypad(
-              addDecimal: addDecimal,
-              addDigit: addDigit,
-              enter: enter,
-              execute: execute,
-              remove: remove,
-            ),
-          ),
-        ],
-      ),
-    );
+    return StateProvider(
+        state: state,
+        number: number,
+        child: const MainScreen(title: "Calculator"));
   }
 
   clear() {
@@ -108,5 +86,60 @@ class _MainScreenState extends State<MainScreen> {
         number = "";
       });
     } catch (Error) {}
+  }
+}
+
+class StateProvider extends InheritedWidget {
+  final CalcState state;
+  final String number;
+
+  const StateProvider({
+    required this.state,
+    required this.number,
+    super.key,
+    required super.child,
+  });
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return true;
+  }
+
+  static StateProvider of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<StateProvider>()!;
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key, required this.title});
+  final String title;
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Flexible(
+            flex: 1,
+            // Consumes state
+            child: Display(),
+          ),
+          Flexible(
+            flex: 2,
+            // Changes state
+            child: Keypad(),
+          ),
+        ],
+      ),
+    );
   }
 }
