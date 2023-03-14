@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rpn/calculator_model.dart';
 
 import 'commands.dart';
 import 'display.dart';
@@ -16,31 +18,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     const title = "Calculator";
     return MaterialApp(
-      title: title,
-      theme: ThemeData.dark(),
-      themeMode: ThemeMode.dark,
-      home: const MainScreen(title: title),
-    );
+        title: title,
+        theme: ThemeData.dark(),
+        themeMode: ThemeMode.dark,
+        home: ChangeNotifierProvider<CalculatorModel>(
+          create: (context) => CalculatorModel(),
+          child: const MainScreen(
+            title: title,
+          ),
+        ));
   }
 }
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key, required this.title});
+class MainScreen extends StatelessWidget {
   final String title;
-
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
-  CalcState state = CalcState.empty();
-  String number = "";
+  const MainScreen({required this.title, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -48,65 +46,15 @@ class _MainScreenState extends State<MainScreen> {
           Flexible(
             flex: 1,
             // Consumes state
-            child: Display(
-              state: state,
-              number: number,
-            ),
+            child: Display(),
           ),
           Flexible(
             flex: 2,
             // Changes state
-            child: Keypad(
-              addDecimal: addDecimal,
-              addDigit: addDigit,
-              enter: enter,
-              execute: execute,
-              remove: remove,
-            ),
+            child: Keypad(),
           ),
         ],
       ),
     );
-  }
-
-  clear() {
-    setState(() {
-      number = "";
-    });
-  }
-
-  remove() {
-    if (number.isEmpty) return;
-    setState(() {
-      number = number.substring(0, number.length - 1);
-    });
-  }
-
-  addDecimal() {
-    setState(() {
-      number = "$number.";
-    });
-  }
-
-  addDigit(int digit) {
-    final newNumber = "$number$digit";
-    if (num.tryParse(newNumber) == null) return;
-    setState(() {
-      number = newNumber;
-    });
-  }
-
-  enter() {
-    execute(Enter(num.tryParse(number)));
-  }
-
-  execute(Command command) {
-    try {
-      final newState = command.execute(state);
-      setState(() {
-        state = newState;
-        number = "";
-      });
-    } catch (Error) {}
   }
 }
