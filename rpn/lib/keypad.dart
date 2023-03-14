@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rpn/calculator_model.dart';
 import 'package:rpn/main.dart';
 
 import 'button_grid.dart';
@@ -11,37 +13,37 @@ class Keypad extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final changer = StateChanger.of(context);
+    final provider = Provider.of<CalculatorModel>(context);
     return ButtonGrid([
       [
-        ButtonDef("Undo", () => changer.execute(Undo())),
-        ButtonDef("Clear", () => changer.execute(Clear())),
-        ButtonDef("Remove", () => changer.remove()),
-        ButtonDef("/", () => changer.execute(Divide())),
+        ButtonDef("Undo", () => provider.execute(Undo())),
+        ButtonDef("Clear", () => provider.execute(Clear())),
+        ButtonDef("Remove", () => provider.remove()),
+        ButtonDef("/", () => provider.execute(Divide())),
       ],
       [
-        ButtonDef("7", () => changer.addDigit(7)),
-        ButtonDef("8", () => changer.addDigit(8)),
-        ButtonDef("9", () => changer.addDigit(9)),
-        ButtonDef("*", () => changer.execute(Multiply())),
+        ButtonDef("7", () => provider.addDigit(7)),
+        ButtonDef("8", () => provider.addDigit(8)),
+        ButtonDef("9", () => provider.addDigit(9)),
+        ButtonDef("*", () => provider.execute(Multiply())),
       ],
       [
-        ButtonDef("4", () => changer.addDigit(4)),
-        ButtonDef("5", () => changer.addDigit(5)),
-        ButtonDef("6", () => changer.addDigit(6)),
-        ButtonDef("-", () => changer.execute(Subtract())),
+        ButtonDef("4", () => provider.addDigit(4)),
+        ButtonDef("5", () => provider.addDigit(5)),
+        ButtonDef("6", () => provider.addDigit(6)),
+        ButtonDef("-", () => provider.execute(Subtract())),
       ],
       [
-        ButtonDef("1", () => changer.addDigit(1)),
-        ButtonDef("2", () => changer.addDigit(2)),
-        ButtonDef("3", () => changer.addDigit(3)),
-        ButtonDef("+", () => changer.execute(Add())),
+        ButtonDef("1", () => provider.addDigit(1)),
+        ButtonDef("2", () => provider.addDigit(2)),
+        ButtonDef("3", () => provider.addDigit(3)),
+        ButtonDef("+", () => provider.execute(Add())),
       ],
       [
         ButtonDef(""),
-        ButtonDef("0", () => changer.addDigit(0)),
-        ButtonDef(".", () => changer.addDecimal()),
-        ButtonDef("Enter", () => changer.enter()),
+        ButtonDef("0", () => provider.addDigit(0)),
+        ButtonDef(".", () => provider.addDecimal()),
+        ButtonDef("Enter", () => provider.enter()),
       ],
     ]);
   }

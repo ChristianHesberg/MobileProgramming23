@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rpn/calculator_model.dart';
 import 'package:rpn/main.dart';
 
 import 'commands.dart';
@@ -8,7 +10,7 @@ class Display extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = StateProvider.of(context);
+    final provider = Provider.of<CalculatorModel>(context);
     return Container(
       color: Colors.black,
       padding: EdgeInsets.all(20),
