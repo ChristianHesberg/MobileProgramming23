@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
+import 'models.dart';
 import 'server.dart';
 
 class WeeklyForecastList extends StatelessWidget {
-  const WeeklyForecastList({Key? key}) : super(key: key);
+  final Forecast forecast;
+  const WeeklyForecastList(this.forecast, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
-    final daily = Server.forecast?.daily ?? [];
+    final daily = forecast.daily;
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
+        (context, index) {
           final forecast = daily[index];
           return Card(
             child: Row(

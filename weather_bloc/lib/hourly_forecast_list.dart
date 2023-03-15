@@ -5,11 +5,12 @@ import 'models.dart';
 import 'server.dart';
 
 class HourlyForecastList extends StatelessWidget {
-  const HourlyForecastList({Key? key}) : super(key: key);
+  final Forecast forecast;
+  HourlyForecastList(this.forecast, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final hourly = Server.forecast?.hourly ?? [];
+    final hourly = forecast.hourly;
     return SliverList(
       delegate: SliverChildListDelegate.fixed([
         Card(child: TemperatureChart(hourly)),
