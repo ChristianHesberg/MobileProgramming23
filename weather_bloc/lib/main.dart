@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_bloc/forecast_bloc.dart';
 
 import 'hourly_forecast_list.dart';
@@ -19,23 +20,11 @@ class HorizonsApp extends StatelessWidget {
       theme: ThemeData.dark(),
       scrollBehavior: const ConstantScrollBehavior(),
       title: 'Horizons Weather',
-      home: ForecastBlocProvider(child: const ForecastWidget()),
+      home: BlocProvider(
+        create: (context) => ForecastBloc(),
+        child: const ForecastWidget(),
+      ),
     );
-  }
-}
-
-class ForecastBlocProvider extends InheritedWidget {
-  final bloc = ForecastBloc();
-
-  ForecastBlocProvider({super.key, required super.child});
-
-  static ForecastBloc of(BuildContext context) {
-    return context.findAncestorWidgetOfExactType<ForecastBlocProvider>()!.bloc;
-  }
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return true;
   }
 }
 
@@ -55,14 +44,14 @@ class _ForecastWidgetState extends State<ForecastWidget> {
 
   @override
   void initState() {
-    final bloc = ForecastBlocProvider.of(context);
+    final bloc = BlocProvider.of<ForecastBloc>(context);
     bloc.add(LoadEvent());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bloc = ForecastBlocProvider.of(context);
+    final bloc = BlocProvider.of<ForecastBloc>(context);
     return StreamBuilder(
       stream: bloc.stream,
       builder: (context, snapshot) => Scaffold(
@@ -99,13 +88,16 @@ class _ForecastWidgetState extends State<ForecastWidget> {
   }
 
   Widget _buildSliverBody(AsyncSnapshot<AppState> snapshot) {
-    if (snapshot.data is LoadedState) {
+    if (snapshot.data is ForecastState) {
       return _tabs
           .elementAt(_selectedIndex)
-          .call((snapshot.data as LoadedState).forecast);
+          .call((snapshot.data as ForecastState).forecast);
     }
     return const SliverToBoxAdapter(
-        child: Center(child: CircularProgressIndicator()));
+        child: Padding(
+      padding: EdgeInsets.all(32.0),
+      child: Center(child: CircularProgressIndicator()),
+    ));
   }
 
   SliverAppBar _buildSliverAppBar() {
