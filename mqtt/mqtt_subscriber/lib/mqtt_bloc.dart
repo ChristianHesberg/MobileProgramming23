@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 import 'mqtt_subscriber.dart';
@@ -127,11 +125,5 @@ class MqttBloc extends Bloc<AppEvent, AppState> {
   close() async {
     _subscriber.disconnect();
     super.close();
-  }
-
-  void _handleUpdates(MqttUpdates event) {
-    for (var update in event) {
-      print(update.payload);
-    }
   }
 }
