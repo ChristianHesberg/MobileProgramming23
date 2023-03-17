@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:light/light.dart';
 import 'package:sensors/app_scaffold.dart';
@@ -17,12 +19,13 @@ class LightPage extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: StreamBuilder<double>(
             initialData: 0,
-            stream: _light.lightSensorStream.map(Smooth(0.3)),
+            stream: _light.lightSensorStream.map((event) => event.toDouble()),
+            //stream: _light.lightSensorStream.map(Smooth(0.3)),
             builder: (context, snapshot) {
               return Column(
                 children: [
                   Text('Lux: ${snapshot.data!.toInt()}', style: textTheme.bodyLarge,),
-                  DayNightWidget(light: toDecimal(snapshot.data!, maxValue: 1000)),
+                  DayNightWidget(light: toDecimal(snapshot.data!, maxValue: 500)),
                 ],
               );
             },

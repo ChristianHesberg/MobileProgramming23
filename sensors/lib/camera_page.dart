@@ -131,6 +131,7 @@ class _CameraWidgetState extends State<CameraWidget> {
           // Attempt to take a picture and then get the location
           // where the image file is saved.
           final image = await _controller.takePicture();
+          print(image.path);
           messenger.showSnackBar(SnackBar(content: Text(image.path)));
         } catch (e) {
           // If an error occurs, log the error to the console.
