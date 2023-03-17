@@ -1,11 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:sensors/app_scaffold.dart';
-import 'package:sensors_plus/sensors_plus.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-// https://pub.dev/packages/sensors_plus
 // https://www.syncfusion.com/blogs/post/updating-live-data-in-flutter-charts.aspx
 
 class Point {
@@ -16,40 +13,17 @@ class Point {
   Point({required this.x, required this.y, required this.z});
 }
 
-class AccelerometerPage extends StatelessWidget {
-  const AccelerometerPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppScaffold(
-      title: 'Accelerometer',
-      body: Column(
-        children: [
-          AccelerometerChart(
-            title:'Raw',
-              stream: accelerometerEvents
-                  .map((e) => Point(x: e.x, y: e.y, z: e.z))),
-          AccelerometerChart(
-            title: 'User',
-              stream: userAccelerometerEvents
-                  .map((e) => Point(x: e.x, y: e.y, z: e.z))),
-        ],
-      ),
-    );
-  }
-}
-
-class AccelerometerChart extends StatefulWidget {
+class PointChart extends StatefulWidget {
   final String title;
   final Stream<Point> stream;
 
-  const AccelerometerChart({required this.title, required this.stream, super.key});
+  const PointChart({required this.title, required this.stream, super.key});
 
   @override
-  State<AccelerometerChart> createState() => _AccelerometerChartState();
+  State<PointChart> createState() => _PointChartState();
 }
 
-class _AccelerometerChartState extends State<AccelerometerChart> {
+class _PointChartState extends State<PointChart> {
   StreamSubscription<Point>? _subscription;
   final List<Point> _events = [];
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sensors/accelerometer_page.dart';
 import 'package:sensors/camera_page.dart';
+import 'package:sensors/sensors_plus_page.dart';
 
 import 'home_page.dart';
 
@@ -9,7 +9,7 @@ import 'home_page.dart';
 const menu = {
   'Home': MyHomePage.new,
   'Camera': CameraPage.new,
-  'Accelerometer': AccelerometerPage.new,
+  'Sensors Plus': SensorsPlus.new,
 };
 
 class DemosDrawer extends StatelessWidget {
