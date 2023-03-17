@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sensors/camera_page.dart';
+import 'package:sensors/compass_page.dart';
 import 'package:sensors/sensors_plus_page.dart';
 
 import 'home_page.dart';
@@ -10,6 +11,7 @@ const menu = {
   'Home': MyHomePage.new,
   'Camera': CameraPage.new,
   'Sensors Plus': SensorsPlus.new,
+  'Compass': CompassPage.new
 };
 
 class DemosDrawer extends StatelessWidget {
