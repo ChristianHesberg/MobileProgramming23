@@ -24,13 +24,26 @@ class DemosDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final navigator = Navigator.of(context);
+    final textTheme = Theme.of(context).textTheme;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
-            child: Text('Demos'),
+          DrawerHeader(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Colors.greenAccent,
+                  Colors.blue,
+                ],
+              ),
+            ),
+            child: Text(
+              'Demos',
+              style: textTheme.titleLarge,
+            ),
           ),
           ...menu.entries.map(
             (e) => ListTile(

@@ -248,6 +248,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.0"
+  parallax_sensors_bg:
+    dependency: "direct main"
+    description:
+      name: parallax_sensors_bg
+      sha256: "5c3d725bc0ccdc41b5595bf120b10695da9767bd60363024531a9233787704ec"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   path:
     dependency: "direct main"
     description:
