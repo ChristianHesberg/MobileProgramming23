@@ -3,6 +3,7 @@ import 'package:sensors/camera_page.dart';
 import 'package:sensors/compass_page.dart';
 import 'package:sensors/gallery_page.dart';
 import 'package:sensors/light_page.dart';
+import 'package:sensors/rotation_page.dart';
 import 'package:sensors/sensors_plus_page.dart';
 
 import 'home_page.dart';
@@ -15,7 +16,8 @@ const menu = {
   'Gallery': GalleryPage.new,
   'Sensors Plus': SensorsPlus.new,
   'Compass': CompassPage.new,
-  'Light': LightPage.new
+  'Light': LightPage.new,
+  'Rotation': RotationPage.new,
 };
 
 class DemosDrawer extends StatelessWidget {
