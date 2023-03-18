@@ -32,7 +32,7 @@ class _PointChartState extends State<PointChart> {
     _subscription = widget.stream.listen((Point event) {
       setState(() {
         if (_events.length > 200) {
-          _events.removeRange(0, _events.length % 200);
+          _events.removeRange(0, _events.length % 100);
         }
         _events.add(event);
       });
@@ -50,20 +50,24 @@ class _PointChartState extends State<PointChart> {
   Widget build(BuildContext context) {
     return SfCartesianChart(
       title: ChartTitle(text: widget.title),
+      legend: Legend(isVisible: true),
       series: [
         LineSeries(
+          legendItemText: 'X',
           color: Colors.green,
           dataSource: _events,
           xValueMapper: (datum, index) => index,
           yValueMapper: (datum, index) => datum.x,
         ),
         LineSeries(
+          legendItemText: 'Y',
           color: Colors.blue,
           dataSource: _events,
           xValueMapper: (datum, index) => index,
           yValueMapper: (datum, index) => datum.y,
         ),
         LineSeries(
+          legendItemText: 'Z',
           color: Colors.red,
           dataSource: _events,
           xValueMapper: (datum, index) => index,
