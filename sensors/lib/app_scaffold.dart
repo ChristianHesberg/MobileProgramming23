@@ -5,7 +5,12 @@ import 'demos_drawer.dart';
 class AppScaffold extends StatelessWidget {
   final String title;
   final Widget body;
-  const AppScaffold({required this.title, required this.body, super.key});
+  final Widget? floatingActionButton;
+  const AppScaffold(
+      {super.key,
+      required this.title,
+      required this.body,
+      this.floatingActionButton});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +20,7 @@ class AppScaffold extends StatelessWidget {
       ),
       drawer: const DemosDrawer(),
       body: body,
+      floatingActionButton: floatingActionButton,
     );
   }
 }
