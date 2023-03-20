@@ -128,7 +128,7 @@ class _MapPageState extends State<MapPage> {
             point: latLng,
             builder: (ctx) => GestureDetector(
               child: const Icon(
-                Icons.man,
+                Icons.location_on,
                 color: Colors.red,
               ),
               onTap: () => showDialog(
