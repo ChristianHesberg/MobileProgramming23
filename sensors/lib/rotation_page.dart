@@ -11,10 +11,17 @@ class RotationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: const DraggableCard(
-        child: FlutterLogo(
-          size: 128,
-        ),
+      body: Column(
+        children: const [
+          Text('Rotate your device to move the image around'),
+          Flexible(
+            child: DraggableCard(
+              child: FlutterLogo(
+                size: 128,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -29,7 +36,7 @@ class DraggableCard extends StatefulWidget {
   State<DraggableCard> createState() => _DraggableCardState();
 }
 
-const speed = 0.05;
+const speed = 5.00;
 
 class _DraggableCardState extends State<DraggableCard>
     with SingleTickerProviderStateMixin {
@@ -48,8 +55,10 @@ class _DraggableCardState extends State<DraggableCard>
           final delta = newTime.microsecondsSinceEpoch -
               (_time?.microsecondsSinceEpoch ?? 0);
           _time = newTime;
-          final x = _alignment.x + (event.x.clamp(-10, 10) * speed);
-          final y = _alignment.y + (event.y.clamp(-10, 10) * speed);
+          final x =
+              _alignment.x + ((event.x.clamp(-10, 10) * speed) / size.width);
+          final y =
+              _alignment.y + ((event.y.clamp(-10, 10) * speed) / size.height);
           _alignment = Alignment(x.clamp(-1, 1), y.clamp(-1, 1));
           return AnimatedAlign(
               duration: Duration(microseconds: delta),

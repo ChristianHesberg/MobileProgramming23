@@ -50,7 +50,7 @@ class _CameraPageState extends State<CameraPage> {
             items: snapshot.data
                     ?.map((e) => DropdownMenuItem(
                           value: e,
-                          child: Text(e.name),
+                          child: Text('${e.lensDirection.name} ${e.name}'),
                         ))
                     .toList() ??
                 [],

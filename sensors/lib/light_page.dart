@@ -24,8 +24,13 @@ class LightPage extends StatelessWidget {
             builder: (context, snapshot) {
               return Column(
                 children: [
-                  Text('Lux: ${snapshot.data!.toInt()}', style: textTheme.bodyLarge,),
-                  DayNightWidget(light: toDecimal(snapshot.data!, maxValue: 500)),
+                  const Text('Image changes based on ambient light level'),
+                  DayNightWidget(
+                      light: toDecimal(snapshot.data!, maxValue: 500)),
+                  Text(
+                    'Lux: ${snapshot.data!.toInt()}',
+                    style: textTheme.bodyLarge,
+                  ),
                 ],
               );
             },
@@ -77,7 +82,9 @@ class DayNightWidget extends StatelessWidget {
       borderRadius: const BorderRadius.all(Radius.circular(16.0)),
       child: Stack(children: [
         Image.asset('assets/hills_night.jpg'),
-        Opacity(opacity: light.toDouble(), child: Image.asset('assets/hills_day.jpg')),
+        Opacity(
+            opacity: light.toDouble(),
+            child: Image.asset('assets/hills_day.jpg')),
       ]),
     );
   }
