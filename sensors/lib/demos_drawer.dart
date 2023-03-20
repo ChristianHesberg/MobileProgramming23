@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sensors/barcode_page.dart';
 import 'package:sensors/camera_page.dart';
 import 'package:sensors/compass_page.dart';
 import 'package:sensors/gallery_page.dart';
@@ -15,6 +16,7 @@ const menu = {
   'Home': MyHomePage.new,
   'Camera': CameraPage.new,
   'Gallery': GalleryPage.new,
+  'Barcode': BarcodePage.new,
   'Sensors Plus': SensorsPlus.new,
   'Compass': CompassPage.new,
   'Light': LightPage.new,
