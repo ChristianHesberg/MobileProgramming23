@@ -96,20 +96,16 @@ class _MapPageState extends State<MapPage> {
     return AppScaffold(
       title: 'Map',
       body: Column(children: [
-        Padding(
+        const Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
-          child: _buildStatusText(latLng),
+          child:
+              Text('Map with a live updating marker of your current location'),
         ),
         Flexible(
           child: _buildMap(latLng),
         ),
       ]),
     );
-  }
-
-  _buildStatusText(LatLng latLng) {
-    return Text('This is a map that is showing '
-        '(${latLng.latitude}, ${latLng.longitude}).');
   }
 
   FlutterMap _buildMap(LatLng latLng) {
@@ -130,13 +126,48 @@ class _MapPageState extends State<MapPage> {
             width: 80,
             height: 80,
             point: latLng,
-            builder: (ctx) => const Icon(
-              Icons.man,
-              color: Colors.red,
+            builder: (ctx) => GestureDetector(
+              child: const Icon(
+                Icons.man,
+                color: Colors.red,
+              ),
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => LocationDialog(latLng),
+              ),
             ),
           ),
         ]),
       ],
+    );
+  }
+}
+
+class LocationDialog extends StatelessWidget {
+  final LatLng position;
+  const LocationDialog(this.position, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('You are currently located at:\n'
+                'Lat: ${position.latitude}, Lng: ${position.longitude}'),
+            const SizedBox(height: 15),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
