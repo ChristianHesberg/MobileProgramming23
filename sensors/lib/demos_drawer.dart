@@ -17,7 +17,7 @@ const menu = {
   'Camera': CameraPage.new,
   'Gallery': GalleryPage.new,
   'Barcode': BarcodePage.new,
-  'Sensors Plus': SensorsPlus.new,
+  'Sensors Plus': SensorsPlusPage.new,
   'Compass': CompassPage.new,
   'Light': LightPage.new,
   'Rotation': RotationPage.new,
