@@ -12,8 +12,6 @@ const String baseForecastUrl =
     'https://api.open-meteo.com/v1/forecast?hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation&daily=weathercode,temperature_2m_max,temperature_2m_min&windspeed_unit=ms&timezone=auto';
 
 class Server {
-  static Forecast? forecast;
-
   static refresh() async {
     final position = await _determinePosition();
     final url =
@@ -23,8 +21,9 @@ class Server {
     final jsonString = response.body;
     final data = json.decode(jsonString);
     final daily = DailyForecast.fromJson(data['daily'] as Map<String, dynamic>);
-    final hourly = HourlyForecast.fromJson(data['hourly'] as Map<String, dynamic>);
-    forecast = Forecast(daily: daily, hourly: hourly);
+    final hourly =
+        HourlyForecast.fromJson(data['hourly'] as Map<String, dynamic>);
+    return Forecast(daily: daily, hourly: hourly);
   }
 
   /// Determine the current position of the device.

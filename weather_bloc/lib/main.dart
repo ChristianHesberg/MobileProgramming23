@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_bloc/forecast_bloc.dart';
 
 import 'hourly_forecast_list.dart';
 import 'server.dart';
@@ -18,7 +20,10 @@ class HorizonsApp extends StatelessWidget {
       theme: ThemeData.dark(),
       scrollBehavior: const ConstantScrollBehavior(),
       title: 'Horizons Weather',
-      home: const ForecastWidget(),
+      home: BlocProvider(
+        create: (context) => ForecastBloc(),
+        child: const ForecastWidget(),
+      ),
     );
   }
 }
@@ -38,34 +43,61 @@ class _ForecastWidgetState extends State<ForecastWidget> {
   ];
 
   @override
+  void initState() {
+    final bloc = BlocProvider.of<ForecastBloc>(context);
+    bloc.add(LoadEvent());
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await Server.refresh();
-        },
-        child: CustomScrollView(
-          slivers: <Widget>[
-            _buildSliverAppBar(),
-            _tabs.elementAt(_selectedIndex).call()
+    final bloc = BlocProvider.of<ForecastBloc>(context);
+    return StreamBuilder(
+      stream: bloc.stream,
+      builder: (context, snapshot) => Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () => _onRefresh(bloc),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              _buildSliverAppBar(),
+              _buildSliverBody(snapshot),
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_view_week), label: 'Weekly'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_view_day), label: 'Hourly'),
           ],
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_view_week), label: 'Weekly'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_view_day), label: 'Hourly'),
-        ],
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
     );
+  }
+
+  Future _onRefresh(ForecastBloc bloc) async {
+    bloc.add(RefreshEvent());
+    await bloc.stream.firstWhere((state) => state is LoadedState);
+  }
+
+  Widget _buildSliverBody(AsyncSnapshot<AppState> snapshot) {
+    if (snapshot.data is ForecastState) {
+      return _tabs
+          .elementAt(_selectedIndex)
+          .call((snapshot.data as ForecastState).forecast);
+    }
+    return const SliverToBoxAdapter(
+        child: Padding(
+      padding: EdgeInsets.all(32.0),
+      child: Center(child: CircularProgressIndicator()),
+    ));
   }
 
   SliverAppBar _buildSliverAppBar() {
