@@ -16,12 +16,6 @@ class CameraPage extends StatefulWidget {
 class _CameraPageState extends State<CameraPage> {
   CameraDescription? camera;
 
-  Future<List<CameraDescription>> _getCameras() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    final cameras = await availableCameras();
-    return cameras;
-  }
-
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
@@ -38,6 +32,12 @@ class _CameraPageState extends State<CameraPage> {
         ],
       ),
     );
+  }
+
+  Future<List<CameraDescription>> _getCameras() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final cameras = await availableCameras();
+    return cameras;
   }
 
   FutureBuilder<List<CameraDescription>> _buildCameraSelection() {

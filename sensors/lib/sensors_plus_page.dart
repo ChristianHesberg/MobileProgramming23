@@ -5,8 +5,8 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 // https://pub.dev/packages/sensors_plus
 
-class SensorsPlus extends StatelessWidget {
-  const SensorsPlus({super.key});
+class SensorsPlusPage extends StatelessWidget {
+  const SensorsPlusPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +15,11 @@ class SensorsPlus extends StatelessWidget {
       body: ListView(
         children: [
           PointChart(
-            title:'Accelerometer',
+              title: 'Accelerometer',
               stream: accelerometerEvents
                   .map((e) => Point(x: e.x, y: e.y, z: e.z))),
           PointChart(
-            title: 'User Accelerometer',
+              title: 'User Accelerometer',
               stream: userAccelerometerEvents
                   .map((e) => Point(x: e.x, y: e.y, z: e.z))),
           PointChart(

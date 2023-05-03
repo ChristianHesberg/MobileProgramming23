@@ -39,20 +39,6 @@ class LightPage extends StatelessWidget {
   }
 }
 
-num toDecimal(num value, {required int maxValue}) {
-  return value.clamp(0, maxValue) / maxValue;
-}
-
-class Smooth {
-  final num a;
-  num acc = 0;
-
-  Smooth(this.a);
-  double call(int e) {
-    return (acc = acc + a * (e.toDouble() - acc));
-  }
-}
-
 class LightWidget extends StatefulWidget {
   const LightWidget({super.key});
 
@@ -87,5 +73,19 @@ class DayNightWidget extends StatelessWidget {
             child: Image.asset('assets/hills_day.jpg')),
       ]),
     );
+  }
+}
+
+num toDecimal(num value, {required int maxValue}) {
+  return value.clamp(0, maxValue) / maxValue;
+}
+
+class Smooth {
+  final num a;
+  num acc = 0;
+
+  Smooth(this.a);
+  double call(int e) {
+    return (acc = acc + a * (e.toDouble() - acc));
   }
 }
